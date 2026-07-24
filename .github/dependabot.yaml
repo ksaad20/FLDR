@@ -2,34 +2,13 @@
 # Automates dependency updates across Python, Docker, and GitHub Actions
 # Documentation: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
 
-version: 0
+version: 1
 
-# -----------------------------------------------------------------------------
-# Global Defaults
-# -----------------------------------------------------------------------------
-# These settings apply unless overridden at the ecosystem level
-
-defaults:
-  # Common labels applied to all Dependabot PRs
-  labels:
-    - "dependencies"
-    - "automated"
-
-  # Default assignees for review
-  assignees:
-    - "ksaad20"
-    - "kaziandelib"
-
-  # Default reviewers
-  reviewers:
-    - "ksaad20"
-    - "kaziandelib"
-
-# -----------------------------------------------------------------------------
-# Python pip Dependencies
-# -----------------------------------------------------------------------------
-# Monitors requirements.txt, setup.py, setup.cfg, and pyproject.toml
-
+updates:
+  # ---------------------------------------------------------------------------
+  # Python pip Dependencies
+  # ---------------------------------------------------------------------------
+  # Monitors requirements.txt, setup.py, setup.cfg, and pyproject.toml
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
@@ -157,38 +136,54 @@ defaults:
     ignore:
       # PyTorch: Pin to CUDA 11.8 compatible versions for Jetson/edge deployment
       - dependency-name: "torch"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
 
       - dependency-name: "torchvision"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
 
       # TensorRT: Often tied to specific JetPack versions
       - dependency-name: "tensorrt"
-        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
 
       # OpenCV: Major versions can break camera integration
       - dependency-name: "opencv-python"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
 
       - dependency-name: "opencv-contrib-python"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
 
       # NumPy: Major versions often break scientific computing stack
       - dependency-name: "numpy"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
 
-    # Labels specific to Python updates
+    # Labels for Python updates
     labels:
       - "dependencies"
       - "python"
       - "automated"
       - "ml-pipeline"
 
-# -----------------------------------------------------------------------------
-# Docker Dependencies
-# -----------------------------------------------------------------------------
-# Monitors Dockerfiles for base image updates
+    # Default assignees
+    assignees:
+      - "ksaad20"
+      - "kaziandelib"
 
+    # Reviewers
+    reviewers:
+      - "ksaad20"
+      - "kaziandelib"
+
+  # ---------------------------------------------------------------------------
+  # Docker Dependencies
+  # ---------------------------------------------------------------------------
+  # Monitors Dockerfiles for base image updates
   - package-ecosystem: "docker"
     directory: "/docker"
     schedule:
@@ -198,7 +193,6 @@ defaults:
       timezone: "UTC"
 
     groups:
-      # Base image updates
       docker-base-images:
         patterns:
           - "nvidia/cuda*"
@@ -219,16 +213,23 @@ defaults:
       - "automated"
       - "deployment"
 
+    assignees:
+      - "your-username"
+
+    reviewers:
+      - "your-username"
+      - "team-robotics-ai"
+
     # Ignore CUDA major version bumps (tied to hardware/driver compatibility)
     ignore:
       - dependency-name: "nvidia/cuda"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
 
-# -----------------------------------------------------------------------------
-# GitHub Actions
-# -----------------------------------------------------------------------------
-# Monitors workflow files in .github/workflows
-
+  # ---------------------------------------------------------------------------
+  # GitHub Actions
+  # ---------------------------------------------------------------------------
+  # Monitors workflow files in .github/workflows
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -238,7 +239,6 @@ defaults:
       timezone: "UTC"
 
     groups:
-      # Group all GitHub Actions updates
       github-actions:
         patterns:
           - "actions/*"
@@ -257,43 +257,60 @@ defaults:
       - "automated"
       - "ci-cd"
 
-# -----------------------------------------------------------------------------
-# Additional pip ecosystem for subdirectories (if applicable)
-# -----------------------------------------------------------------------------
-# Uncomment and modify if you have separate requirements in subdirectories
-# e.g., for ROS2 packages, notebooks, or deployment scripts
+    assignees:
+      - "your-username"
 
-#   - package-ecosystem: "pip"
-#     directory: "/ros2/crack_detection_node"
-#     schedule:
-#       interval: "monthly"
-#     labels:
-#       - "dependencies"
-#       - "python"
-#       - "ros2"
-#       - "automated"
-#     open-pull-requests-limit: 3
-#     groups:
-#       ros2-dependencies:
-#         patterns:
-#           - "rclpy*"
-#           - "std-msgs*"
-#           - "sensor-msgs*"
-#           - "cv-bridge*"
+    reviewers:
+      - "your-username"
+      - "team-robotics-ai"
 
-#   - package-ecosystem: "pip"
-#     directory: "/notebooks"
-#     schedule:
-#       interval: "monthly"
-#     labels:
-#       - "dependencies"
-#       - "python"
-#       - "notebooks"
-#       - "automated"
-#     open-pull-requests-limit: 3
-#     groups:
-#       notebook-dependencies:
-#         patterns:
-#           - "jupyter*"
-#           - "ipykernel*"
-#           - "ipywidgets*"
+  # ---------------------------------------------------------------------------
+  # Optional: ROS2 package dependencies (uncomment if needed)
+  # ---------------------------------------------------------------------------
+  # - package-ecosystem: "pip"
+  #   directory: "/ros2/crack_detection_node"
+  #   schedule:
+  #     interval: "monthly"
+  #     day: "monday"
+  #     time: "09:00"
+  #     timezone: "UTC"
+  #   labels:
+  #     - "dependencies"
+  #     - "python"
+  #     - "ros2"
+  #     - "automated"
+  #   open-pull-requests-limit: 3
+  #   groups:
+  #     ros2-dependencies:
+  #       patterns:
+  #         - "rclpy*"
+  #         - "std-msgs*"
+  #         - "sensor-msgs*"
+  #         - "cv-bridge*"
+  #   assignees:
+  #     - "your-username"
+
+  # ---------------------------------------------------------------------------
+  # Optional: Notebook dependencies (uncomment if needed)
+  # ---------------------------------------------------------------------------
+  # - package-ecosystem: "pip"
+  #   directory: "/notebooks"
+  #   schedule:
+  #     interval: "monthly"
+  #     day: "monday"
+  #     time: "09:00"
+  #     timezone: "UTC"
+  #   labels:
+  #     - "dependencies"
+  #     - "python"
+  #     - "notebooks"
+  #     - "automated"
+  #   open-pull-requests-limit: 3
+  #   groups:
+  #     notebook-dependencies:
+  #       patterns:
+  #         - "jupyter*"
+  #         - "ipykernel*"
+  #         - "ipywidgets*"
+  #   assignees:
+  #     - "your-username"
