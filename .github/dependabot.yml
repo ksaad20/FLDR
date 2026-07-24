@@ -18,11 +18,12 @@ defaults:
   # Default assignees for review
   assignees:
     - "ksaad20"
+    - "kaziandelib"
 
   # Default reviewers
   reviewers:
     - "ksaad20"
-    - "Cherket Institute"
+    - "kaziandelib"
 
 # -----------------------------------------------------------------------------
 # Python pip Dependencies
