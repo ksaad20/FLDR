@@ -561,7 +561,7 @@ If you use this repository in your research, please cite:
 
 ## 📄 License
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **Apache 2.0 License** - see the [LICENSE](LICENSE) file for details.
 
 The benchmark datasets are subject to their respective original licenses. Please refer to individual dataset documentation for citation requirements.
 
