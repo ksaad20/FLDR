@@ -1,0 +1,298 @@
+# Dependabot configuration for Fault Line Detection in Robotics
+# Automates dependency updates across Python, Docker, and GitHub Actions
+# Documentation: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+
+version: 0
+
+# -----------------------------------------------------------------------------
+# Global Defaults
+# -----------------------------------------------------------------------------
+# These settings apply unless overridden at the ecosystem level
+
+defaults:
+  # Common labels applied to all Dependabot PRs
+  labels:
+    - "dependencies"
+    - "automated"
+
+  # Default assignees for review
+  assignees:
+    - "ksaad20"
+
+  # Default reviewers
+  reviewers:
+    - "ksaad20"
+    - "Cherket Institute"
+
+# -----------------------------------------------------------------------------
+# Python pip Dependencies
+# -----------------------------------------------------------------------------
+# Monitors requirements.txt, setup.py, setup.cfg, and pyproject.toml
+
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+
+    # Group related updates to reduce PR noise
+    groups:
+      # Core ML/CV framework updates (high impact, review carefully)
+      ml-frameworks:
+        patterns:
+          - "torch*"
+          - "torchvision*"
+          - "torchaudio*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Computer Vision and Image Processing
+      cv-libraries:
+        patterns:
+          - "opencv-python*"
+          - "opencv-contrib-python*"
+          - "Pillow*"
+          - "albumentations*"
+          - "imgaug*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Deep Learning Utilities
+      dl-utilities:
+        patterns:
+          - "timm*"
+          - "segmentation-models*"
+          - "transformers*"
+          - "accelerate*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Data Science & Numerical Computing
+      data-science:
+        patterns:
+          - "numpy*"
+          - "scipy*"
+          - "pandas*"
+          - "scikit-learn*"
+          - "scikit-image*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Visualization & Dashboards
+      visualization:
+        patterns:
+          - "matplotlib*"
+          - "seaborn*"
+          - "plotly*"
+          - "streamlit*"
+          - "gradio*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # ROS2 & Robotics
+      robotics:
+        patterns:
+          - "rclpy*"
+          - "ros*"
+          - "launch*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Development & Testing Tools
+      dev-tools:
+        patterns:
+          - "pytest*"
+          - "black*"
+          - "isort*"
+          - "flake8*"
+          - "mypy*"
+          - "pre-commit*"
+          - "coverage*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # Documentation
+      docs:
+        patterns:
+          - "sphinx*"
+          - "mkdocs*"
+          - "myst-parser*"
+        update-types:
+          - "minor"
+          - "patch"
+
+      # All other minor/patch updates
+      minor-patch-dependencies:
+        update-types:
+          - "minor"
+          - "patch"
+
+    # Major version updates get individual PRs for careful review
+    # (they are not included in any group above)
+
+    # Allow up to 10 open PRs at a time
+    open-pull-requests-limit: 10
+
+    # Rebase strategy
+    rebase-strategy: "auto"
+
+    # Commit message conventions
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+      include: "scope"
+
+    # Ignore specific packages that are known to cause breaking changes
+    # or are pinned for hardware compatibility (e.g., Jetson, CUDA)
+    ignore:
+      # PyTorch: Pin to CUDA 11.8 compatible versions for Jetson/edge deployment
+      - dependency-name: "torch"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "torchvision"
+        update-types: ["version-update:semver-major"]
+
+      # TensorRT: Often tied to specific JetPack versions
+      - dependency-name: "tensorrt"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+      # OpenCV: Major versions can break camera integration
+      - dependency-name: "opencv-python"
+        update-types: ["version-update:semver-major"]
+
+      - dependency-name: "opencv-contrib-python"
+        update-types: ["version-update:semver-major"]
+
+      # NumPy: Major versions often break scientific computing stack
+      - dependency-name: "numpy"
+        update-types: ["version-update:semver-major"]
+
+    # Labels specific to Python updates
+    labels:
+      - "dependencies"
+      - "python"
+      - "automated"
+      - "ml-pipeline"
+
+# -----------------------------------------------------------------------------
+# Docker Dependencies
+# -----------------------------------------------------------------------------
+# Monitors Dockerfiles for base image updates
+
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "09:00"
+      timezone: "UTC"
+
+    groups:
+      # Base image updates
+      docker-base-images:
+        patterns:
+          - "nvidia/cuda*"
+          - "python*"
+          - "ubuntu*"
+          - "ros*"
+
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
+
+    commit-message:
+      prefix: "deps(docker)"
+      include: "scope"
+
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"
+      - "deployment"
+
+    # Ignore CUDA major version bumps (tied to hardware/driver compatibility)
+    ignore:
+      - dependency-name: "nvidia/cuda"
+        update-types: ["version-update:semver-major"]
+
+# -----------------------------------------------------------------------------
+# GitHub Actions
+# -----------------------------------------------------------------------------
+# Monitors workflow files in .github/workflows
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "09:00"
+      timezone: "UTC"
+
+    groups:
+      # Group all GitHub Actions updates
+      github-actions:
+        patterns:
+          - "actions/*"
+          - "github/*"
+
+    open-pull-requests-limit: 5
+    rebase-strategy: "auto"
+
+    commit-message:
+      prefix: "deps(ci)"
+      include: "scope"
+
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+      - "ci-cd"
+
+# -----------------------------------------------------------------------------
+# Additional pip ecosystem for subdirectories (if applicable)
+# -----------------------------------------------------------------------------
+# Uncomment and modify if you have separate requirements in subdirectories
+# e.g., for ROS2 packages, notebooks, or deployment scripts
+
+#   - package-ecosystem: "pip"
+#     directory: "/ros2/crack_detection_node"
+#     schedule:
+#       interval: "monthly"
+#     labels:
+#       - "dependencies"
+#       - "python"
+#       - "ros2"
+#       - "automated"
+#     open-pull-requests-limit: 3
+#     groups:
+#       ros2-dependencies:
+#         patterns:
+#           - "rclpy*"
+#           - "std-msgs*"
+#           - "sensor-msgs*"
+#           - "cv-bridge*"
+
+#   - package-ecosystem: "pip"
+#     directory: "/notebooks"
+#     schedule:
+#       interval: "monthly"
+#     labels:
+#       - "dependencies"
+#       - "python"
+#       - "notebooks"
+#       - "automated"
+#     open-pull-requests-limit: 3
+#     groups:
+#       notebook-dependencies:
+#         patterns:
+#           - "jupyter*"
+#           - "ipykernel*"
+#           - "ipywidgets*"
