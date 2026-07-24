@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-EE4C2C.svg)](https://pytorch.org/)
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-5C3EE8.svg)](https://opencv.org/)
-[![License](https://img.shields.io/badge/License-Apache-2.0.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache-2.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](docker/)
 
 **Computer Vision · Deep Learning · Non-Destructive Testing**
