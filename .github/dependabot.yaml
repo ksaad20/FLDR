@@ -2,7 +2,7 @@
 # Automates dependency updates across Python, Docker, and GitHub Actions
 # Documentation: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
 
-version: 1
+version: 2
 
 updates:
   # ---------------------------------------------------------------------------
