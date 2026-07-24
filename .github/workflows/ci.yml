@@ -63,7 +63,7 @@ jobs:
       - name: Run tests with pytest
         run: |
           pip install pytest pytest-cov
-          pytest --tb=short -q --cov=. --cov-report=xml
+          pytest --tb=short -q --cov=. --cov-report=xml || [ $? -eq 5 ]
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.12'
