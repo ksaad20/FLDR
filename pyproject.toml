@@ -33,11 +33,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "black>=26.5.1",
-    "ruff>=0.6",
-    "flake8>=7.3.0",
+    "ruff>=0.16.0",
+    "flake8>=7.0",
     "flake8-pyproject>=1.2.4",
     "mypy>=2.3.0",
-    "pytest>=8.0",
+    "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "pytest-xdist>=3.8.0",
     "bandit[toml]>=1.7",
