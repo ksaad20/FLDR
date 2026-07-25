@@ -1,5 +1,8 @@
 [build-system]
-requires = ["setuptools>=75", "wheel"]
+requires = [
+    "setuptools>=75",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -17,16 +20,12 @@ authors = [
 keywords = [
     "pipeline",
     "pipeline-inspection",
-    "fault-detection",
     "robotics",
-    "computer-vision",
+    "fault-detection",
     "lidar",
+    "computer-vision",
     "sensor-fusion",
     "slam",
-    "inspection",
-    "mapping",
-    "autonomous-systems",
-    "machine-learning",
 ]
 
 classifiers = [
@@ -38,12 +37,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
-    "Environment :: Console",
-    "Framework :: Typer",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
 dependencies = [
@@ -51,27 +45,26 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-
 dev = [
     "black>=25.1.0",
     "ruff>=0.12.0",
-    "flake8>=7.1.0",
+    "flake8>=7.1.2",
     "flake8-pyproject>=1.2.3",
     "mypy>=1.11.0",
-    "pytest>=8.3.0",
+    "pytest>=8.3.2",
     "pytest-cov>=6.0.0",
-    "pytest-xdist>=3.6.0",
-    "bandit[toml]>=1.8.0",
-    "pre-commit>=4.0.0",
+    "pytest-xdist>=3.6.1",
+    "bandit[toml]>=1.8.3",
+    "pre-commit>=4.0.1",
 ]
 
 docs = [
-    "mkdocs>=1.6.0",
-    "mkdocs-material>=9.6.0",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.15",
 ]
 
 cli = [
-    "rich>=13.9.0",
+    "rich>=13.9.4",
     "shellingham>=1.5.4",
 ]
 
@@ -92,7 +85,7 @@ fldr = ["py.typed"]
 
 [tool.black]
 line-length = 88
-target-version = ["py310", "py311", "py312", "py313"]
+target-version = ["py310", "py311", "py312"]
 
 [tool.ruff]
 line-length = 88
@@ -109,8 +102,8 @@ select = [
     "SIM",
     "C4",
     "N",
-    "RUF",
     "PTH",
+    "RUF",
 ]
 
 ignore = [
@@ -120,15 +113,17 @@ ignore = [
     "D213",
 ]
 
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
 [tool.ruff.lint.isort]
 known-first-party = ["fldr"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+line-ending = "auto"
+skip-magic-trailing-comma = false
 
 [tool.flake8]
 max-line-length = 88
@@ -136,14 +131,19 @@ extend-ignore = [
     "E203",
     "W503",
 ]
+per-file-ignores = [
+    "__init__.py:F401",
+]
 
 [tool.mypy]
 python_version = "3.10"
 strict = true
 ignore_missing_imports = true
-warn_unused_ignores = true
 warn_return_any = true
+warn_unused_ignores = true
+warn_unused_configs = true
 show_error_codes = true
+pretty = true
 
 [tool.pytest.ini_options]
 minversion = "8.0"
@@ -152,13 +152,27 @@ python_files = [
     "test_*.py",
     "*_test.py",
 ]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+    "--tb=short",
+]
 
 [tool.coverage.run]
 branch = true
+omit = [
+    "tests/*",
+]
 
 [tool.coverage.xml]
 output = "coverage.xml"
 
 [tool.bandit]
-exclude_dirs = ["tests"]
-skips = ["B101"]
+exclude_dirs = [
+    "tests",
+]
+skips = [
+    "B101",
+]
