@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FLDR"
-version = "0.1.0"
+version = "0.0.1"
 description = "A top-tier Python project"
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
 authors = [
-    { name = "Your Name", email = "your.email@example.com" },
+    { name = "Asif Kazi", email = "kazisaadasif29@gmail.com" },
 ]
 keywords = ["python", "project", "template"]
 classifiers = [
@@ -70,7 +70,7 @@ fldr = ["py.typed"]
 # =============================================================================
 [tool.black]
 line-length = 88
-target-version = ["py310", "py311", "py312", "py313"]
+target-version = ["py310", "py311", "py312"]
 include = '\.pyi?$'
 exclude = '''
 /(
