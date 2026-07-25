@@ -236,9 +236,9 @@ def configuration_to_dict(
             "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
             "enable_calibration": config.sensors.enable_calibration,
             "calibration_directory": str(
-        config.sensors.calibration_directory,
-    ),
-},
+    config.sensors.calibration_directory,
+),
+        },
         "output": {
             "directory": str(
                 config.output.directory,
@@ -303,7 +303,6 @@ def load_json(
             str(config.general.workspace),
         ),
     )
-
     logging = data.get("logging", {})
     config.logging.level = logging.get(
         "level",
@@ -321,7 +320,6 @@ def load_json(
         "file",
         config.logging.file,
     )
-    
     detection = data.get("detection", {})
     config.detection.confidence_threshold = detection.get(
         "confidence_threshold",
@@ -335,7 +333,6 @@ def load_json(
         "enable_gpu",
         config.detection.enable_gpu,
     )
-
     output = data.get("output", {})
     config.output.directory = Path(
         output.get(
@@ -496,7 +493,9 @@ def export_configuration(
         )
         return
 
-    msg = "minimum_fault_length_m cannot exceed " "maximum_fault_length_m."
+    msg = (
+    "minimum_fault_length_m cannot exceed maximum_fault_length_m."
+)
     raise ConfigurationError(msg)
 
 
