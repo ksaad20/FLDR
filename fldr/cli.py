@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import importlib
-from collections.abc import Callable
-
 import typer
 
-__version__ = "0.1.0"
+
+__version__ = "0.0.1"
 
 app = typer.Typer(
     name="fldr",
