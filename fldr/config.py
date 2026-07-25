@@ -205,7 +205,6 @@ def configuration_to_dict(
     return {
         "general": {
             "application_name": config.general.application_name,
-            ),
             "version": config.general.version,
             "workspace": str(
                 config.general.workspace,
