@@ -1,10 +1,4 @@
-"""
-FLDR configuration management.
-
-This module provides a centralized configuration system for the FLDR
-framework. Configuration may originate from defaults, TOML files,
-environment variables, or future plugin providers.
-"""
+"""Configuration management for the FLDR framework."""
 
 from __future__ import annotations
 
@@ -13,17 +7,13 @@ from dataclasses import field
 import json
 import os
 from pathlib import Path
-from typing import Any
 
 try:
     import tomllib
 except ModuleNotFoundError:  # pragma: no cover
     tomllib = None
 
-
 __all__ = [
-    "DEFAULT_CONFIG_DIRECTORY",
-    "DEFAULT_CONFIG_FILE",
     "ConfigurationError",
     "GeneralConfig",
     "LoggingConfig",
@@ -31,21 +21,22 @@ __all__ = [
     "DetectionConfig",
     "OutputConfig",
     "FLDRConfig",
+    "DEFAULT_CONFIG_DIRECTORY",
+    "DEFAULT_CONFIG_FILE",
     "create_default_config",
 ]
-
 
 DEFAULT_CONFIG_DIRECTORY = Path.home() / ".config" / "fldr"
 DEFAULT_CONFIG_FILE = DEFAULT_CONFIG_DIRECTORY / "config.toml"
 
 
 class ConfigurationError(ValueError):
-    """Raised when a configuration file is invalid."""
+    """Raised when configuration values are invalid."""
 
 
 @dataclass(slots=True)
 class GeneralConfig:
-    """General FLDR configuration."""
+    """General application configuration."""
 
     application_name: str = "FLDR"
     version: str = "0.0.1"
@@ -60,10 +51,10 @@ class LoggingConfig:
 
     enabled: bool = True
     level: str = "INFO"
-    log_directory: Path = Path.cwd() / "logs"
-    log_filename: str = "fldr.log"
     console: bool = True
     file: bool = True
+    directory: Path = Path.cwd() / "logs"
+    filename: str = "fldr.log"
 
 
 @dataclass(slots=True)
@@ -74,11 +65,9 @@ class SensorConfig:
     camera: bool = True
     imu: bool = True
     gps: bool = True
-    wheel_encoder: bool = False
     radar: bool = False
-
+    wheel_encoder: bool = False
     sampling_frequency_hz: float = 30.0
-
     enable_calibration: bool = True
     calibration_directory: Path = Path.cwd() / "calibration"
 
@@ -88,17 +77,11 @@ class DetectionConfig:
     """Fault-line detection configuration."""
 
     enabled: bool = True
-
     confidence_threshold: float = 0.80
-
     minimum_fault_length_m: float = 0.20
-
     maximum_fault_length_m: float = 1000.0
-
     maximum_faults: int = 100
-
     enable_gpu: bool = False
-
     enable_parallel_processing: bool = True
 
 
@@ -107,15 +90,10 @@ class OutputConfig:
     """Output configuration."""
 
     directory: Path = Path.cwd() / "output"
-
     save_json: bool = True
-
     save_csv: bool = True
-
     save_images: bool = True
-
     save_point_clouds: bool = True
-
     overwrite_existing: bool = False
 
 
@@ -124,29 +102,20 @@ class FLDRConfig:
     """Top-level FLDR configuration."""
 
     general: GeneralConfig = field(default_factory=GeneralConfig)
-
     logging: LoggingConfig = field(default_factory=LoggingConfig)
-
     sensors: SensorConfig = field(default_factory=SensorConfig)
-
     detection: DetectionConfig = field(default_factory=DetectionConfig)
-
     output: OutputConfig = field(default_factory=OutputConfig)
 
     def validate(self) -> None:
-        """Validate the current configuration."""
+        """Validate the configuration."""
 
-        threshold = self.detection.confidence_threshold
-
-        if not 0.0 <= threshold <= 1.0:
-            msg = (
-                "Detection confidence_threshold must "
-                "be between 0.0 and 1.0."
-            )
+        if not 0.0 <= self.detection.confidence_threshold <= 1.0:
+            msg = "confidence_threshold must be between 0.0 and 1.0."
             raise ConfigurationError(msg)
 
         if self.detection.maximum_faults < 1:
-            msg = "maximum_faults must be at least one."
+            msg = "maximum_faults must be greater than zero."
             raise ConfigurationError(msg)
 
         if (
@@ -161,17 +130,14 @@ class FLDRConfig:
 
 
 def create_default_config() -> FLDRConfig:
-    """Create a validated default configuration."""
+    """Return a validated default configuration."""
 
     config = FLDRConfig()
-
     config.validate()
-
     return config
 
-
 def ensure_config_directory() -> Path:
-    """Create the default configuration directory if necessary."""
+    """Create the default configuration directory."""
 
     DEFAULT_CONFIG_DIRECTORY.mkdir(
         parents=True,
@@ -179,6 +145,7 @@ def ensure_config_directory() -> Path:
     )
 
     return DEFAULT_CONFIG_DIRECTORY
+
 
 def config_exists() -> bool:
     """Return whether the default configuration file exists."""
@@ -189,48 +156,39 @@ def config_exists() -> bool:
 def load_environment(
     config: FLDRConfig,
 ) -> FLDRConfig:
-    """Load configuration values from environment variables."""
+    """Apply environment variable overrides."""
 
     log_level = os.getenv("FLDR_LOG_LEVEL")
-
-    if log_level is not None:
+    if log_level:
         config.logging.level = log_level.upper()
 
-    enable_gpu = os.getenv("FLDR_ENABLE_GPU")
-
-    if enable_gpu is not None:
-        config.detection.enable_gpu = enable_gpu.lower() in {
+    gpu = os.getenv("FLDR_ENABLE_GPU")
+    if gpu:
+        config.detection.enable_gpu = gpu.lower() in {
             "1",
             "true",
             "yes",
             "on",
         }
 
-    confidence = os.getenv(
+    threshold = os.getenv(
         "FLDR_CONFIDENCE_THRESHOLD",
     )
-
-    if confidence is not None:
+    if threshold:
         config.detection.confidence_threshold = float(
-            confidence,
+            threshold,
         )
+
+    workspace = os.getenv("FLDR_WORKSPACE")
+    if workspace:
+        config.general.workspace = Path(workspace)
 
     output_directory = os.getenv(
         "FLDR_OUTPUT_DIRECTORY",
     )
-
-    if output_directory is not None:
+    if output_directory:
         config.output.directory = Path(
             output_directory,
-        )
-
-    workspace = os.getenv(
-        "FLDR_WORKSPACE",
-    )
-
-    if workspace is not None:
-        config.general.workspace = Path(
-            workspace,
         )
 
     config.validate()
@@ -238,16 +196,20 @@ def load_environment(
     return config
 
 
-def config_to_dict(
+def configuration_to_dict(
     config: FLDRConfig,
-) -> dict[str, Any]:
+) -> dict[str, object]:
     """Convert a configuration into a serializable dictionary."""
 
     return {
         "general": {
-            "application_name": config.general.application_name,
+            "application_name": (
+                config.general.application_name
+            ),
             "version": config.general.version,
-            "workspace": str(config.general.workspace),
+            "workspace": str(
+                config.general.workspace,
+            ),
             "cache_directory": str(
                 config.general.cache_directory,
             ),
@@ -258,20 +220,22 @@ def config_to_dict(
         "logging": {
             "enabled": config.logging.enabled,
             "level": config.logging.level,
-            "log_directory": str(
-                config.logging.log_directory,
-            ),
-            "log_filename": config.logging.log_filename,
             "console": config.logging.console,
             "file": config.logging.file,
+            "directory": str(
+                config.logging.directory,
+            ),
+            "filename": config.logging.filename,
         },
         "sensors": {
             "lidar": config.sensors.lidar,
             "camera": config.sensors.camera,
             "imu": config.sensors.imu,
             "gps": config.sensors.gps,
-            "wheel_encoder": config.sensors.wheel_encoder,
             "radar": config.sensors.radar,
+            "wheel_encoder": (
+                config.sensors.wheel_encoder
+            ),
             "sampling_frequency_hz": (
                 config.sensors.sampling_frequency_hz
             ),
@@ -318,7 +282,6 @@ def config_to_dict(
             ),
         },
     }
-
 def save_json(
     config: FLDRConfig,
     path: Path,
@@ -330,14 +293,12 @@ def save_json(
         exist_ok=True,
     )
 
-    data = config_to_dict(config)
-
     with path.open(
         "w",
         encoding="utf-8",
     ) as file:
         json.dump(
-            data,
+            configuration_to_dict(config),
             file,
             indent=4,
             sort_keys=True,
@@ -353,22 +314,19 @@ def load_json(
         "r",
         encoding="utf-8",
     ) as file:
-        data: dict[str, Any] = json.load(file)
+        data = json.load(file)
 
     config = create_default_config()
 
     general = data.get("general", {})
-
     config.general.application_name = general.get(
         "application_name",
         config.general.application_name,
     )
-
     config.general.version = general.get(
         "version",
         config.general.version,
     )
-
     config.general.workspace = Path(
         general.get(
             "workspace",
@@ -377,66 +335,43 @@ def load_json(
     )
 
     logging = data.get("logging", {})
-
-    config.logging.enabled = logging.get(
-        "enabled",
-        config.logging.enabled,
-    )
-
     config.logging.level = logging.get(
         "level",
         config.logging.level,
     )
-
-    detection = data.get(
-        "detection",
-        {},
-    )
-
-    config.detection.enabled = detection.get(
+    config.logging.enabled = logging.get(
         "enabled",
-        config.detection.enabled,
+        config.logging.enabled,
+    )
+    config.logging.console = logging.get(
+        "console",
+        config.logging.console,
+    )
+    config.logging.file = logging.get(
+        "file",
+        config.logging.file,
     )
 
-    config.detection.confidence_threshold = (
-        detection.get(
-            "confidence_threshold",
-            config.detection.confidence_threshold,
-        )
+    detection = data.get("detection", {})
+    config.detection.confidence_threshold = detection.get(
+        "confidence_threshold",
+        config.detection.confidence_threshold,
+    )
+    config.detection.maximum_faults = detection.get(
+        "maximum_faults",
+        config.detection.maximum_faults,
+    )
+    config.detection.enable_gpu = detection.get(
+        "enable_gpu",
+        config.detection.enable_gpu,
     )
 
-    config.detection.maximum_faults = (
-        detection.get(
-            "maximum_faults",
-            config.detection.maximum_faults,
-        )
-    )
-
-    output = data.get(
-        "output",
-        {},
-    )
-
+    output = data.get("output", {})
     config.output.directory = Path(
         output.get(
             "directory",
             str(config.output.directory),
         ),
-    )
-
-    config.output.save_json = output.get(
-        "save_json",
-        config.output.save_json,
-    )
-
-    config.output.save_csv = output.get(
-        "save_csv",
-        config.output.save_csv,
-    )
-
-    config.output.save_images = output.get(
-        "save_images",
-        config.output.save_images,
     )
 
     config.validate()
@@ -450,123 +385,34 @@ def load_toml(
     """Load a configuration from a TOML file."""
 
     if tomllib is None:
-        msg = "tomllib is unavailable on this Python version."
+        msg = "tomllib is unavailable."
         raise ConfigurationError(msg)
 
     with path.open("rb") as file:
-        data: dict[str, Any] = tomllib.load(file)
+        data = tomllib.load(file)
 
-    config = create_default_config()
-    return config
+    json_path = path.with_suffix(".json")
 
-    general = data.get("general", {})
+    with json_path.open(
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            data,
+            file,
+        )
 
-    config.general.application_name = general.get(
-        "application_name",
-        config.general.application_name,
-    )
-
-    config.general.version = general.get(
-        "version",
-        config.general.version,
-    )
-
-    config.general.workspace = Path(
-        general.get(
-            "workspace",
-            str(config.general.workspace),
-        ),
-    )
-
-    logging = data.get("logging", {})
-
-    config.logging.enabled = logging.get(
-        "enabled",
-        config.logging.enabled,
-    )
-
-    config.logging.level = logging.get(
-        "level",
-        config.logging.level,
-    )
-
-    sensors = data.get("sensors", {})
-
-    config.sensors.lidar = sensors.get(
-        "lidar",
-        config.sensors.lidar,
-    )
-
-    config.sensors.camera = sensors.get(
-        "camera",
-        config.sensors.camera,
-    )
-
-    config.sensors.imu = sensors.get(
-        "imu",
-        config.sensors.imu,
-    )
-
-    config.sensors.gps = sensors.get(
-        "gps",
-        config.sensors.gps,
-    )
-
-    detection = data.get(
-        "detection",
-        {},
-    )
-
-    config.detection.enabled = detection.get(
-        "enabled",
-        config.detection.enabled,
-    )
-
-    config.detection.confidence_threshold = detection.get(
-        "confidence_threshold",
-        config.detection.confidence_threshold,
-    )
-
-    config.detection.maximum_faults = detection.get(
-        "maximum_faults",
-        config.detection.maximum_faults,
-    )
-
-    output = data.get("output", {})
-
-    config.output.directory = Path(
-        output.get(
-            "directory",
-            str(config.output.directory),
-        ),
-    )
-
-    config.output.save_json = output.get(
-        "save_json",
-        config.output.save_json,
-    )
-
-    config.output.save_csv = output.get(
-        "save_csv",
-        config.output.save_csv,
-    )
-
-    config.output.save_images = output.get(
-        "save_images",
-        config.output.save_images,
-    )
-
-    config.validate()
-
-    return config
+    return load_json(json_path)
 
 
 def discover_configuration() -> Path | None:
-    """Discover the most appropriate configuration file."""
+    """Return the first configuration file found."""
 
     candidates = (
         Path.cwd() / "fldr.toml",
+        Path.cwd() / "fldr.json",
         DEFAULT_CONFIG_FILE,
+        DEFAULT_CONFIG_FILE.with_suffix(".json"),
     )
 
     for candidate in candidates:
@@ -579,36 +425,39 @@ def discover_configuration() -> Path | None:
 def load_configuration() -> FLDRConfig:
     """Load the best available configuration."""
 
-    config = create_default_config()
-
     path = discover_configuration()
 
     if path is None:
-        return load_environment(config)
+        return load_environment(
+            create_default_config(),
+        )
 
     if path.suffix == ".json":
         config = load_json(path)
     elif path.suffix == ".toml":
         config = load_toml(path)
+    else:
+        config = create_default_config()
 
     return load_environment(config)
-    def save_default_configuration() -> Path:
-    """Create the default configuration file if it does not exist."""
+
+def save_default_configuration() -> Path:
+    """Save the default configuration to disk."""
 
     ensure_config_directory()
 
-    config = create_default_config()
+    path = DEFAULT_CONFIG_FILE.with_suffix(".json")
 
     save_json(
-        config,
-        DEFAULT_CONFIG_FILE.with_suffix(".json"),
+        create_default_config(),
+        path,
     )
 
-    return DEFAULT_CONFIG_FILE.with_suffix(".json")
+    return path
 
 
 def reset_configuration() -> FLDRConfig:
-    """Reset the configuration to its default values."""
+    """Return a freshly initialized configuration."""
 
     return create_default_config()
 
@@ -618,54 +467,55 @@ def configuration_summary(
 ) -> str:
     """Return a human-readable configuration summary."""
 
-    lines = [
-        "FLDR Configuration",
-        "==================",
-        "",
-        "[General]",
-        f"Application : {config.general.application_name}",
-        f"Version     : {config.general.version}",
-        f"Workspace   : {config.general.workspace}",
-        "",
-        "[Logging]",
-        f"Enabled     : {config.logging.enabled}",
-        f"Level       : {config.logging.level}",
-        "",
-        "[Sensors]",
-        f"LiDAR       : {config.sensors.lidar}",
-        f"Camera      : {config.sensors.camera}",
-        f"IMU         : {config.sensors.imu}",
-        f"GPS         : {config.sensors.gps}",
-        f"Radar       : {config.sensors.radar}",
-        "",
-        "[Detection]",
+    return "\n".join(
         (
-            "Confidence : "
-            f"{config.detection.confidence_threshold:.2f}"
+            "FLDR Configuration",
+            "==================",
+            "",
+            "[General]",
+            f"Application : {config.general.application_name}",
+            f"Version     : {config.general.version}",
+            f"Workspace   : {config.general.workspace}",
+            "",
+            "[Logging]",
+            f"Enabled     : {config.logging.enabled}",
+            f"Level       : {config.logging.level}",
+            "",
+            "[Sensors]",
+            f"LiDAR       : {config.sensors.lidar}",
+            f"Camera      : {config.sensors.camera}",
+            f"IMU         : {config.sensors.imu}",
+            f"GPS         : {config.sensors.gps}",
+            f"Radar       : {config.sensors.radar}",
+            "",
+            "[Detection]",
+            (
+                "Confidence : "
+                f"{config.detection.confidence_threshold:.2f}"
+            ),
+            (
+                "Maximum    : "
+                f"{config.detection.maximum_faults}"
+            ),
+            (
+                "GPU        : "
+                f"{config.detection.enable_gpu}"
+            ),
+            "",
+            "[Output]",
+            f"Directory   : {config.output.directory}",
+            f"JSON        : {config.output.save_json}",
+            f"CSV         : {config.output.save_csv}",
+            f"Images      : {config.output.save_images}",
+            f"PointClouds : {config.output.save_point_clouds}",
         ),
-        (
-            "Maximum    : "
-            f"{config.detection.maximum_faults}"
-        ),
-        (
-            "GPU        : "
-            f"{config.detection.enable_gpu}"
-        ),
-        "",
-        "[Output]",
-        f"Directory  : {config.output.directory}",
-        f"JSON       : {config.output.save_json}",
-        f"CSV        : {config.output.save_csv}",
-        f"Images     : {config.output.save_images}",
-    ]
-
-    return "\n".join(lines)
+    )
 
 
 def print_configuration(
     config: FLDRConfig,
 ) -> None:
-    """Print the current configuration."""
+    """Print a configuration summary."""
 
     print(configuration_summary(config))
 
@@ -674,17 +524,20 @@ def export_configuration(
     config: FLDRConfig,
     path: Path,
 ) -> None:
-    """Export the configuration according to the file extension."""
+    """Export a configuration."""
 
     suffix = path.suffix.lower()
 
     if suffix == ".json":
-        save_json(config, path)
+        save_json(
+            config,
+            path,
+        )
         return
 
     msg = (
         "Unsupported configuration format. "
-        "Only JSON export is currently supported."
+        "Supported formats: .json"
     )
     raise ConfigurationError(msg)
 
@@ -695,24 +548,6 @@ def is_gpu_enabled(
     """Return whether GPU acceleration is enabled."""
 
     return config.detection.enable_gpu
-
-
-def is_sensor_enabled(
-    config: FLDRConfig,
-    sensor: str,
-) -> bool:
-    """Return whether a sensor is enabled."""
-
-    sensors = {
-        "lidar": config.sensors.lidar,
-        "camera": config.sensors.camera,
-        "imu": config.sensors.imu,
-        "gps": config.sensors.gps,
-        "radar": config.sensors.radar,
-        "wheel_encoder": config.sensors.wheel_encoder,
-    }
-
-    return sensors.get(sensor.lower(), False)
 
 
 def enable_gpu(
@@ -729,4 +564,28 @@ def disable_gpu(
     """Disable GPU acceleration."""
 
     config.detection.enable_gpu = False
-    
+
+
+def is_sensor_enabled(
+    config: FLDRConfig,
+    sensor: str,
+) -> bool:
+    """Return whether a sensor is enabled."""
+
+    sensors = {
+        "lidar": config.sensors.lidar,
+        "camera": config.sensors.camera,
+        "imu": config.sensors.imu,
+        "gps": config.sensors.gps,
+        "radar": config.sensors.radar,
+        "wheel_encoder": (
+            config.sensors.wheel_encoder
+        ),
+    }
+
+    return sensors.get(
+        sensor.lower(),
+        False,
+    )
+
+
