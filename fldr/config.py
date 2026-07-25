@@ -78,8 +78,7 @@ class FLDRConfig:
             raise ConfigurationError("inspection length must be positive.")
 
         if self.sensors.sampling_frequency_hz <= 0:
-            raise ConfigurationError(
-                "sampling_frequency_hz must be positive."
+            raise ConfigurationError("sampling_frequency_hz must be positive.")
             )
 
 
