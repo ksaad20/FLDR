@@ -535,10 +535,7 @@ def export_configuration(
         )
         return
 
-    msg = (
-        "Unsupported configuration format. "
-        "Supported formats: .json"
-    )
+    msg = "minimum_fault_length_m cannot exceed " "maximum_fault_length_m."
     raise ConfigurationError(msg)
 
 
