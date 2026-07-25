@@ -167,8 +167,17 @@ def create_default_config() -> FLDRConfig:
 
     config.validate()
 
+    def create_default_config() -> FLDRConfig:
+    """Create a validated default configuration."""
+
+    config = FLDRConfig()
+
+    config.validate()
+
     return config
-    def ensure_config_directory() -> Path:
+
+
+def ensure_config_directory() -> Path:
     """Create the default configuration directory if necessary."""
 
     DEFAULT_CONFIG_DIRECTORY.mkdir(
@@ -177,7 +186,6 @@ def create_default_config() -> FLDRConfig:
     )
 
     return DEFAULT_CONFIG_DIRECTORY
-
 
 def config_exists() -> bool:
     """Return whether the default configuration file exists."""
