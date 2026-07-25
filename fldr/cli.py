@@ -6,7 +6,6 @@ import importlib
 
 import typer
 
-
 __version__ = "0.0.1"
 
 app = typer.Typer(
