@@ -27,4 +27,3 @@ def empty_collection() -> list:
 def invalid_inputs() -> list:
     """Return a list of common invalid inputs for parametrized tests."""
     return [None, "", [], {}, 0, -1, float("inf")]
-  
