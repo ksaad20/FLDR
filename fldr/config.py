@@ -167,13 +167,6 @@ def create_default_config() -> FLDRConfig:
 
     config.validate()
 
-    def create_default_config() -> FLDRConfig:
-    """Create a validated default configuration."""
-
-    config = FLDRConfig()
-
-    config.validate()
-
     return config
 
 
