@@ -442,7 +442,9 @@ def load_json(
     config.validate()
 
     return config
-    def load_toml(
+
+
+def load_toml(
     path: Path,
 ) -> FLDRConfig:
     """Load a configuration from a TOML file."""
@@ -455,6 +457,7 @@ def load_json(
         data: dict[str, Any] = tomllib.load(file)
 
     config = create_default_config()
+    return config
 
     general = data.get("general", {})
 
