@@ -318,7 +318,8 @@ def config_to_dict(
             ),
         },
     }
-    def save_json(
+
+def save_json(
     config: FLDRConfig,
     path: Path,
 ) -> None:
