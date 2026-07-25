@@ -134,7 +134,7 @@ def create_default_config() -> FLDRConfig:
 
     config = FLDRConfig()
     config.validate()
-return config
+    return config
 
 
 def ensure_config_directory() -> Path:
@@ -227,15 +227,15 @@ def configuration_to_dict(
             "filename": config.logging.filename,
         },
         "sensors": {
-    "lidar": config.sensors.lidar,
-    "camera": config.sensors.camera,
-    "imu": config.sensors.imu,
-    "gps": config.sensors.gps,
-    "radar": config.sensors.radar,
-    "wheel_encoder": config.sensors.wheel_encoder,
-    "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
-    "enable_calibration": config.sensors.enable_calibration,
-    "calibration_directory": str(
+            "lidar": config.sensors.lidar,
+            "camera": config.sensors.camera,
+            "imu": config.sensors.imu,
+            "gps": config.sensors.gps,
+            "radar": config.sensors.radar,
+            "wheel_encoder": config.sensors.wheel_encoder,
+            "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
+            "enable_calibration": config.sensors.enable_calibration,
+            "calibration_directory": str(
         config.sensors.calibration_directory,
     ),
 },
@@ -321,7 +321,7 @@ def load_json(
         "file",
         config.logging.file,
     )
-
+    
     detection = data.get("detection", {})
     config.detection.confidence_threshold = detection.get(
         "confidence_threshold",
@@ -459,18 +459,9 @@ def configuration_summary(
             f"Radar       : {config.sensors.radar}",
             "",
             "[Detection]",
-            (
-                "Confidence : "
-                f"{config.detection.confidence_threshold:.2f}"
-            ),
-            (
-                "Maximum    : "
-                f"{config.detection.maximum_faults}"
-            ),
-            (
-                "GPU        : "
-                f"{config.detection.enable_gpu}"
-            ),
+            f"Confidence : {config.detection.confidence_threshold:.2f}",
+            f"Maximum    : {config.detection.maximum_faults}",
+            f"GPU        : {config.detection.enable_gpu}",
             "",
             "[Output]",
             f"Directory   : {config.output.directory}",
@@ -545,9 +536,7 @@ def is_sensor_enabled(
         "imu": config.sensors.imu,
         "gps": config.sensors.gps,
         "radar": config.sensors.radar,
-        "wheel_encoder": (
-            config.sensors.wheel_encoder
-        ),
+        "wheel_encoder": config.sensors.wheel_encoder,
     }
 
     return sensors.get(
