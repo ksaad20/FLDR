@@ -45,4 +45,3 @@ class TestPackageImports:
     def test_version_accessible_from_top_level(self) -> None:
         """Version should be accessible from the top-level namespace."""
         assert hasattr(fldr, "__version__")
-      
