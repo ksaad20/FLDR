@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import fldr
-import fldr as _fldr
 
 
 class TestPackageMetadata:
