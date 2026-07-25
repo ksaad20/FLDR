@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fldr
+import fldr as _fldr
 
 
 class TestPackageMetadata:
@@ -40,7 +41,6 @@ class TestPackageImports:
 
     def test_top_level_import_succeeds(self) -> None:
         """Importing the top-level package should succeed."""
-        import fldr as _fldr
 
         assert _fldr is not None
 
