@@ -227,24 +227,18 @@ def configuration_to_dict(
             "filename": config.logging.filename,
         },
         "sensors": {
-            "lidar": config.sensors.lidar,
-            "camera": config.sensors.camera,
-            "imu": config.sensors.imu,
-            "gps": config.sensors.gps,
-            "radar": config.sensors.radar,
-            "wheel_encoder": config.sensors.wheel_encoder,
-            "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
-            "enable_calibration": config.sensors.enable_calibration
-            "calibration_directory": config.sensors.calibration_directory,
-            "detection": "enabled": config.detection.enabled,
-            "confidence_threshold": config.detection.confidence_threshold,
-            "minimum_fault_length_m": config.detection.minimum_fault_length_m,
-            "maximum_faults": config.detection.maximum_faults,
-            "enable_gpu": config.detection.enable_gpu,
-            "enable_parallel_processing": (
-                config.detection.enable_parallel_processing
-            ),
-        },
+    "lidar": config.sensors.lidar,
+    "camera": config.sensors.camera,
+    "imu": config.sensors.imu,
+    "gps": config.sensors.gps,
+    "radar": config.sensors.radar,
+    "wheel_encoder": config.sensors.wheel_encoder,
+    "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
+    "enable_calibration": config.sensors.enable_calibration,
+    "calibration_directory": str(
+        config.sensors.calibration_directory,
+    ),
+},
         "output": {
             "directory": str(
                 config.output.directory,
