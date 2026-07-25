@@ -75,7 +75,6 @@ class FLDRConfig:
         if self.sensors.sampling_frequency_hz <= 0:
             raise ConfigurationError("sampling_frequency_hz must be positive.")
 
-
 def create_default_config() -> FLDRConfig:
     """Return a validated default configuration."""
 
