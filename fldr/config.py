@@ -134,7 +134,8 @@ def create_default_config() -> FLDRConfig:
 
     config = FLDRConfig()
     config.validate()
-    return config
+return config
+
 
 def ensure_config_directory() -> Path:
     """Create the default configuration directory."""
@@ -203,8 +204,7 @@ def configuration_to_dict(
 
     return {
         "general": {
-            "application_name": (
-                config.general.application_name
+            "application_name": config.general.application_name,
             ),
             "version": config.general.version,
             "workspace": str(
@@ -233,36 +233,15 @@ def configuration_to_dict(
             "imu": config.sensors.imu,
             "gps": config.sensors.gps,
             "radar": config.sensors.radar,
-            "wheel_encoder": (
-                config.sensors.wheel_encoder
-            ),
-            "sampling_frequency_hz": (
-                config.sensors.sampling_frequency_hz
-            ),
-            "enable_calibration": (
-                config.sensors.enable_calibration
-            ),
-            "calibration_directory": str(
-                config.sensors.calibration_directory,
-            ),
-        },
-        "detection": {
-            "enabled": config.detection.enabled,
-            "confidence_threshold": (
-                config.detection.confidence_threshold
-            ),
-            "minimum_fault_length_m": (
-                config.detection.minimum_fault_length_m
-            ),
-            "maximum_fault_length_m": (
-                config.detection.maximum_fault_length_m
-            ),
-            "maximum_faults": (
-                config.detection.maximum_faults
-            ),
-            "enable_gpu": (
-                config.detection.enable_gpu
-            ),
+            "wheel_encoder": config.sensors.wheel_encoder,
+            "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
+            "enable_calibration": config.sensors.enable_calibration
+            "calibration_directory": config.sensors.calibration_directory,
+            "detection": "enabled": config.detection.enabled,
+            "confidence_threshold": config.detection.confidence_threshold,
+            "minimum_fault_length_m": config.detection.minimum_fault_length_m,
+            "maximum_faults": config.detection.maximum_faults,
+            "enable_gpu": config.detection.enable_gpu,
             "enable_parallel_processing": (
                 config.detection.enable_parallel_processing
             ),
@@ -274,14 +253,12 @@ def configuration_to_dict(
             "save_json": config.output.save_json,
             "save_csv": config.output.save_csv,
             "save_images": config.output.save_images,
-            "save_point_clouds": (
-                config.output.save_point_clouds
-            ),
-            "overwrite_existing": (
-                config.output.overwrite_existing
-            ),
+            "save_point_clouds": config.output.save_point_clouds,
+            "overwrite_existing": config.output.overwrite_existing,
         },
     }
+
+
 def save_json(
     config: FLDRConfig,
     path: Path,
@@ -584,5 +561,3 @@ def is_sensor_enabled(
         sensor.lower(),
         False,
     )
-
-
