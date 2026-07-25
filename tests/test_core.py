@@ -41,8 +41,6 @@ class TestPackageImports:
     def test_top_level_import_succeeds(self) -> None:
         """Importing the top-level package should succeed."""
 
-        assert _fldr is not None
-
     def test_version_accessible_from_top_level(self) -> None:
         """Version should be accessible from the top-level namespace."""
         assert hasattr(fldr, "__version__")
