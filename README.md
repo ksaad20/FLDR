@@ -7,6 +7,7 @@
 [![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-5C3EE8.svg)](https://opencv.org/)
 [![License](https://img.shields.io/badge/License-Apache-2.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg)](docker/)
+[![CI](https://github.com/ksaad20/FLDR/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ksaad20/FLDR/actions/workflows/ci.yml)
 
 **Computer Vision · Deep Learning · Non-Destructive Testing**
 
