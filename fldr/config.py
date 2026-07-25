@@ -236,7 +236,7 @@ def configuration_to_dict(
             "sampling_frequency_hz": config.sensors.sampling_frequency_hz,
             "enable_calibration": config.sensors.enable_calibration,
             "calibration_directory": str(
-    config.sensors.calibration_directory,
+        config.sensors.calibration_directory,
 ),
         },
         "output": {
@@ -406,7 +406,8 @@ def load_configuration() -> FLDRConfig:
     else:
         config = create_default_config()
 
-    return load_environment(config)
+        return load_environment(config)
+
 
 def save_default_configuration() -> Path:
     """Save the default configuration to disk."""
@@ -493,9 +494,7 @@ def export_configuration(
         )
         return
 
-    msg = (
-    "minimum_fault_length_m cannot exceed maximum_fault_length_m."
-)
+    msg = "minimum_fault_length_m cannot exceed maximum_fault_length_m."
     raise ConfigurationError(msg)
 
 
