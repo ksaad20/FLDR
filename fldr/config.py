@@ -65,7 +65,6 @@ class FLDRConfig:
 
     def validate(self) -> None:
         """Validate configuration values."""
-
         if not 0.0 <= self.detection.confidence_threshold <= 1.0:
             raise ConfigurationError(
                 "confidence_threshold must be between 0.0 and 1.0."
@@ -78,17 +77,17 @@ class FLDRConfig:
             raise ConfigurationError("inspection length must be positive.")
 
         if self.sensors.sampling_frequency_hz <= 0.0:
-            raise ConfigurationError("sampling_frequency_hz must be positive.")
+            raise ConfigurationError(
+                "sampling_frequency_hz must be positive."
+            )
 
     def to_dict(self) -> dict[str, object]:
         """Return the configuration as a dictionary."""
-
         return asdict(self)
 
 
 def create_default_config() -> FLDRConfig:
     """Create and validate the default configuration."""
-
     config = FLDRConfig()
     config.validate()
     return config
