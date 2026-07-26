@@ -19,3 +19,4 @@ class TestCLI:
         public = [name for name in dir(module) if not name.startswith("_")]
 
         assert public
+        
