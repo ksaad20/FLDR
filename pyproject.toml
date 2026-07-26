@@ -4,13 +4,41 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FLDR"
-version = "0.0.1"
+version = "0.1.0"
 description = "Fault Line Detection in Robotics"
+readme = "README.md"
 requires-python = ">=3.10"
+license = { text = "MIT" }
+
+authors = [
+    { name = "Kazi Saad Asif" }
+]
+
+dependencies = [
+    "typer>=0.12.5",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=25.0",
+    "ruff>=0.12",
+    "flake8>=7.0",
+    "mypy>=1.10",
+    "pytest>=8.4",
+    "pytest-cov>=6.0",
+    "bandit>=1.8",
+]
+
+[project.scripts]
+fldr = "fldr.cli:app"
 
 [tool.setuptools.packages.find]
 include = ["fldr*"]
-exclude = ["docker*"]
+exclude = [
+    "docker*",
+    "tests*",
+    "docs*",
+]
 
 [tool.black]
 line-length = 88
@@ -33,10 +61,13 @@ extend-ignore = [
 ]
 
 [tool.mypy]
+python_version = "3.10"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"
 
 [tool.bandit]
 skips = ["B101"]
