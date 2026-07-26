@@ -8,10 +8,35 @@ version = "0.1.0"
 description = "Fault Line Detection in Robotics"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "Apache-2.0"
 
 authors = [
-    { name = "Kazi Saad Asif" }
+    { name = "Kazi Saad Asif" },
+]
+
+keywords = [
+    "fault-detection",
+    "pipeline-inspection",
+    "robotics",
+    "computer-vision",
+    "lidar",
+    "inspection",
+    "automation",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 dependencies = [
@@ -20,17 +45,27 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "bandit>=1.7",
     "black>=25.0",
-    "ruff>=0.12",
+    "build>=1.2",
     "flake8>=7.0",
     "mypy>=1.10",
-    "pytest>=8.4",
-    "pytest-cov>=6.0",
-    "bandit>=1.8",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.12",
+    "twine>=6.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/ksaad20/FLDR"
+Repository = "https://github.com/ksaad20/FLDR"
+Issues = "https://github.com/ksaad20/FLDR/issues"
 
 [project.scripts]
 fldr = "fldr.cli:app"
+
+[tool.setuptools]
+include-package-data = true
 
 [tool.setuptools.packages.find]
 include = ["fldr*"]
@@ -38,6 +73,7 @@ exclude = [
     "docker*",
     "tests*",
     "docs*",
+    ".github*",
 ]
 
 [tool.black]
@@ -49,8 +85,13 @@ line-length = 88
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F"]
-ignore = ["E501"]
+select = [
+    "E",
+    "F",
+]
+ignore = [
+    "E501",
+]
 
 [tool.flake8]
 max-line-length = 88
@@ -63,11 +104,20 @@ extend-ignore = [
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true
+warn_return_any = true
+warn_unused_configs = true
+check_untyped_defs = true
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-addopts = "-ra"
+testpaths = [
+    "tests",
+]
+python_files = [
+    "test_*.py",
+]
+addopts = "-ra --cov=fldr --cov-report=xml"
 
 [tool.bandit]
-skips = ["B101"]
+skips = [
+    "B101",
+]
