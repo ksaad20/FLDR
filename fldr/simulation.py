@@ -1,55 +1,47 @@
 """
-FLDR simulation module.
+Simulation utilities for generating synthetic pipe fault signals.
 
-Generates synthetic pipe inspection sensor data
-for testing fault detection algorithms.
+This module provides a configurable simulator for generating sensor-like
+signals containing fault events. It is intended for testing and benchmarking
+fault line detection algorithms.
 """
 
-from dataclasses import dataclass
-from typing import Dict
+from __future__ import annotations
 
 import numpy as np
 
-
-@dataclass
-class SimulationConfig:
-    """Configuration for pipe fault simulation."""
-
-    length: int = 1000
-    noise_level: float = 0.05
-    fault_probability: float = 0.02
-    fault_amplitude: float = 1.0
-    seed: int = 42
+from fldr.config import SimulationConfig
 
 
-class PipeSimulator:
-    """
-    Simulates robotic pipe inspection sensor streams.
+class FaultSimulator:
+    """Generate synthetic signals with simulated pipe faults."""
 
-    Generates:
-    - baseline sensor readings
-    - pipe anomalies
-    - fault labels
-    """
-
-    def __init__(
-        self,
-        config: SimulationConfig | None = None,
-    ):
-        self.config = config or SimulationConfig()
-        self.rng = np.random.default_rng(self.config.seed)
-
-    def generate(self) -> Dict[str, np.ndarray]:
+    def __init__(self, config: SimulationConfig) -> None:
         """
-        Generate synthetic inspection data.
+        Initialize the fault simulator.
+
+        Parameters
+        ----------
+        config:
+            Simulation configuration containing signal parameters,
+            fault characteristics, and random seed.
+        """
+        self.config = config
+        self.rng = np.random.default_rng(config.seed)
+
+    def generate(self) -> dict[str, np.ndarray]:
+        """
+        Generate a synthetic fault signal.
 
         Returns
         -------
-        dict
-            Simulated sensor data and fault labels.
+        dict[str, np.ndarray]
+            Dictionary containing:
+            - position: sample positions
+            - signal: generated sensor signal
+            - labels: binary fault labels
         """
-
-        n = self.config.length
+        n = self.config.signal_length
 
         signal = self.rng.normal(
             loc=0.0,
@@ -57,52 +49,37 @@ class PipeSimulator:
             size=n,
         )
 
-        labels = np.zeros(n, dtype=int)
+        labels = np.zeros(
+            n,
+            dtype=int,
+        )
 
-        faults = self.rng.random(n) < self.config.fault_probability
+        for _ in range(self.config.num_faults):
+            index = self.rng.integers(
+                low=0,
+                high=n,
+            )
 
-        for index in np.where(faults)[0]:
             width = self.rng.integers(
                 low=5,
                 high=20,
             )
 
-            end = min(index + width, n)
+            end = min(
+                index + width,
+                n,
+            )
 
-            signal[index:end] += (
+            fault_signal = (
                 self.config.fault_amplitude * self.rng.random()
             )
+
+            signal[index:end] += fault_signal
 
             labels[index:end] = 1
 
         return {
             "position": np.arange(n),
-            "sensor_signal": signal,
-            "fault_labels": labels,
+            "signal": signal,
+            "labels": labels,
         }
-
-
-def simulate_inspection(
-    length: int = 1000,
-) -> Dict[str, np.ndarray]:
-    """
-    Convenience function for quick simulations.
-    """
-
-    simulator = PipeSimulator(SimulationConfig(length=length))
-
-    return simulator.generate()
-
-
-if __name__ == "__main__":
-    data = simulate_inspection()
-
-    print(
-        "Generated samples:",
-        len(data["sensor_signal"]),
-    )
-
-    print(
-        "Detected fault points:",
-        data["fault_labels"].sum(),
-    )
