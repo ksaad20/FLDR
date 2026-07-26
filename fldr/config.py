@@ -5,10 +5,20 @@ from __future__ import annotations
 import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-
+from dataclasses import dataclass
 
 class ConfigurationError(ValueError):
     """Raised when the configuration is invalid."""
+
+@dataclass
+class SimulationConfig:
+    """Configuration for synthetic fault signal generation."""
+
+    signal_length: int = 1000
+    noise_level: float = 0.1
+    num_faults: int = 5
+    fault_amplitude: float = 1.0
+    seed: int = 42
 
 
 @dataclass(slots=True)
