@@ -10,6 +10,7 @@ from pathlib import Path
 class ConfigurationError(ValueError):
     """Raised when the configuration is invalid."""
 
+
 @dataclass
 class SimulationConfig:
     """Configuration for synthetic fault signal generation."""
