@@ -6,8 +6,52 @@ import csv
 import json
 from pathlib import Path
 from typing import Any
+import numpy as np
 
 from fldr.core import InspectionReport
+
+
+def save_signal(
+    signal: np.ndarray,
+    path: str | Path,
+) -> None:
+    """
+    Save a sensor signal to disk.
+
+    Parameters
+    ----------
+    signal:
+        One-dimensional sensor signal.
+    path:
+        Output file path.
+    """
+    output_path = Path(path)
+
+    np.save(
+        output_path,
+        signal,
+    )
+
+
+def load_signal(
+    path: str | Path,
+) -> np.ndarray:
+    """
+    Load a sensor signal from disk.
+
+    Parameters
+    ----------
+    path:
+        Input file path.
+
+    Returns
+    -------
+    np.ndarray
+        Loaded sensor signal.
+    """
+    input_path = Path(path)
+
+    return np.load(input_path)
 
 
 def save_report_json(report: InspectionReport, path: str | Path) -> Path:
