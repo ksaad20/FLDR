@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from dataclasses import dataclass
 
 class ConfigurationError(ValueError):
     """Raised when the configuration is invalid."""
