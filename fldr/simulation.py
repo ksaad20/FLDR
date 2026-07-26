@@ -1,66 +1,126 @@
-"""Simulation utilities for FLDR."""
+"""
+FLDR simulation module.
 
-from __future__ import annotations
+Generates synthetic pipe inspection sensor data
+for testing fault detection algorithms.
+"""
 
-import random
 from dataclasses import dataclass
+from typing import Dict
+
+import numpy as np
 
 
-@dataclass(slots=True)
-class SimulatedFault:
-    """Represents a simulated pipeline fault."""
+@dataclass
+class SimulationConfig:
+    """Configuration for pipe fault simulation."""
 
-    fault_type: str
-    position_m: float
-    confidence: float
+    length: int = 1000
+    noise_level: float = 0.05
+    fault_probability: float = 0.02
+    fault_amplitude: float = 1.0
+    seed: int = 42
 
 
-class PipelineSimulator:
-    """Generate synthetic pipeline inspection data."""
+class PipeSimulator:
+    """
+    Simulates robotic pipe inspection sensor streams.
 
-    def __init__(self, seed: int | None = None) -> None:
-        """Initialize the simulator."""
-        self._random = random.Random(seed)
+    Generates:
+    - baseline sensor readings
+    - pipe anomalies
+    - fault labels
+    """
 
-    def generate_fault(
+    def __init__(
         self,
-        length_m: float,
-    ) -> SimulatedFault:
-        """Generate a single simulated fault."""
-        if length_m <= 0.0:
-            raise ValueError("Pipeline length must be positive.")
-
-        return SimulatedFault(
-            fault_type=self._random.choice(
-                [
-                    "crack",
-                    "corrosion",
-                    "leak",
-                ]
-            ),
-            position_m=self._random.uniform(
-                0.0,
-                length_m,
-            ),
-            confidence=round(
-                self._random.uniform(
-                    0.7,
-                    0.99,
-                ),
-                3,
-            ),
+        config: SimulationConfig | None = None,
+    ):
+        self.config = config or SimulationConfig()
+        self.rng = np.random.default_rng(
+            self.config.seed
         )
 
-    def generate_faults(
+    def generate(
         self,
-        length_m: float,
-        count: int,
-    ) -> list[SimulatedFault]:
-        """Generate multiple simulated faults."""
-        if count < 0:
-            raise ValueError("count must be non-negative.")
+    ) -> Dict[str, np.ndarray]:
+        """
+        Generate synthetic inspection data.
 
-        return [
-            self.generate_fault(length_m)
-            for _ in range(count)
-        ]
+        Returns
+        -------
+        dict:
+            sensor_data:
+                simulated sensor readings
+
+            fault_labels:
+                binary fault locations
+        """
+
+        n = self.config.length
+
+        # Normal pipe sensor response
+        signal = self.rng.normal(
+            loc=0.0,
+            scale=self.config.noise_level,
+            size=n,
+        )
+
+        labels = np.zeros(n, dtype=int)
+
+        # Random fault generation
+        faults = self.rng.random(n) < (
+            self.config.fault_probability
+        )
+
+        for index in np.where(faults)[0]:
+            width = self.rng.integers(
+                low=5,
+                high=20,
+            )
+
+            end = min(
+                index + width,
+                n,
+            )
+
+            signal[index:end] += (
+                self.config.fault_amplitude
+                * self.rng.random()
+            )
+
+            labels[index:end] = 1
+
+        return {
+            "position": np.arange(n),
+            "sensor_signal": signal,
+            "fault_labels": labels,
+        }
+
+
+def simulate_inspection(
+    length: int = 1000,
+) -> Dict[str, np.ndarray]:
+    """
+    Convenience function for quick simulations.
+    """
+
+    simulator = PipeSimulator(
+        SimulationConfig(length=length)
+    )
+
+    return simulator.generate()
+
+
+if __name__ == "__main__":
+    data = simulate_inspection()
+
+    print(
+        "Generated samples:",
+        len(data["sensor_signal"]),
+    )
+
+    print(
+        "Detected fault points:",
+        data["fault_labels"].sum(),
+    )
