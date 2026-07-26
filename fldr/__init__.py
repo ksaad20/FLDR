@@ -2,7 +2,7 @@
 ...
 """
 
-from .pipeline import run_inspection
+from .pipeline import Pipeline 
 from .report import InspectionReport
 
 __author__ = "Asif Kazi"
