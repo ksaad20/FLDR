@@ -1,7 +1,3 @@
-"""
-...
-"""
-
 from .pipeline import Pipeline 
 from .report import InspectionReport
 
