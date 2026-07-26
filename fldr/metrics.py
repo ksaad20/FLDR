@@ -121,9 +121,7 @@ def f1_score(
         return 0.0
 
     return float(
-        2
-        * (precision_value * recall_value)
-        / denominator,
+        2 * (precision_value * recall_value) / denominator,
     )
 
 
