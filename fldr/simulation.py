@@ -1,9 +1,9 @@
 """
-Simulation utilities for generating synthetic pipe fault signals.
+Synthetic signal simulation module for Fault Line Detection Robotics (FLDR).
 
-This module provides a configurable simulator for generating sensor-like
-signals containing fault events. It is intended for testing and benchmarking
-fault line detection algorithms.
+This module generates realistic pipe inspection signals with configurable
+noise, fault locations, and fault amplitudes. It is designed for testing
+fault detection algorithms before deployment on real robotic sensor data.
 """
 
 from __future__ import annotations
@@ -14,72 +14,96 @@ from fldr.config import SimulationConfig
 
 
 class FaultSimulator:
-    """Generate synthetic signals with simulated pipe faults."""
+    """
+    Simulator for generating synthetic pipe fault sensor data.
+
+    Parameters
+    ----------
+    config:
+        Simulation configuration object containing signal generation
+        parameters.
+    """
 
     def __init__(self, config: SimulationConfig) -> None:
-        """
-        Initialize the fault simulator.
-
-        Parameters
-        ----------
-        config:
-            Simulation configuration containing signal parameters,
-            fault characteristics, and random seed.
-        """
         self.config = config
         self.rng = np.random.default_rng(config.seed)
 
-    def generate(self) -> dict[str, np.ndarray]:
+    def generate_signal(self) -> dict[str, np.ndarray]:
         """
-        Generate a synthetic fault signal.
+        Generate a synthetic pipe inspection signal.
 
         Returns
         -------
         dict[str, np.ndarray]
-            Dictionary containing:
-            - position: sample positions
-            - signal: generated sensor signal
-            - labels: binary fault labels
+            Generated signal data containing:
+            - position: sensor sample positions
+            - signal: simulated sensor response
+            - labels: binary fault annotations
         """
-        n = self.config.signal_length
+        signal_length = self.config.signal_length
 
         signal = self.rng.normal(
             loc=0.0,
             scale=self.config.noise_level,
-            size=n,
+            size=signal_length,
         )
 
         labels = np.zeros(
-            n,
-            dtype=int,
+            signal_length,
+            dtype=np.int32,
         )
 
         for _ in range(self.config.num_faults):
-            index = self.rng.integers(
+            fault_start = self.rng.integers(
                 low=0,
-                high=n,
+                high=signal_length,
             )
 
-            width = self.rng.integers(
+            fault_width = self.rng.integers(
                 low=5,
                 high=20,
             )
 
-            end = min(
-                index + width,
-                n,
+            fault_end = min(
+                fault_start + fault_width,
+                signal_length,
             )
 
-            fault_signal = (
+            fault_strength = (
                 self.config.fault_amplitude * self.rng.random()
             )
 
-            signal[index:end] += fault_signal
+            signal[fault_start:fault_end] += fault_strength
 
-            labels[index:end] = 1
+            labels[fault_start:fault_end] = 1
 
         return {
-            "position": np.arange(n),
+            "position": np.arange(signal_length),
             "signal": signal,
             "labels": labels,
         }
+
+    def add_noise(
+        self,
+        signal: np.ndarray,
+    ) -> np.ndarray:
+        """
+        Add measurement noise to an existing signal.
+
+        Parameters
+        ----------
+        signal:
+            Input sensor signal.
+
+        Returns
+        -------
+        np.ndarray
+            Noisy sensor signal.
+        """
+        noise = self.rng.normal(
+            loc=0.0,
+            scale=self.config.noise_level,
+            size=signal.shape,
+        )
+
+        return signal + noise
