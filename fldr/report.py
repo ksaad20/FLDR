@@ -8,7 +8,7 @@ from typing import Any
 
 @dataclass(slots=True)
 class InspectionReport:
-    """Summary of a pipe inspection."""
+    """Container for the results of a pipe inspection."""
 
     fault_detected: bool
     confidence: float
@@ -17,7 +17,7 @@ class InspectionReport:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
-        """Return the report as a dictionary."""
+        """Convert the report to a dictionary."""
         return {
             "fault_detected": self.fault_detected,
             "confidence": self.confidence,
@@ -30,25 +30,49 @@ class InspectionReport:
     def from_dict(cls, data: dict[str, Any]) -> "InspectionReport":
         """Create an inspection report from a dictionary."""
         return cls(
-            fault_detected=data.get("fault_detected", False),
+            fault_detected=bool(data.get("fault_detected", False)),
             confidence=float(data.get("confidence", 0.0)),
             fault_location=data.get("fault_location"),
             metrics=dict(data.get("metrics", {})),
             metadata=dict(data.get("metadata", {})),
         )
 
-    def __str__(self) -> str:
-        """Return a human-readable summary."""
-        location = (
-            f"{self.fault_location:.2f} m"
-            if self.fault_location is not None
-            else "Unknown"
-        )
+    @property
+    def has_fault(self) -> bool:
+        """Return whether a fault was detected."""
+        return self.fault_detected
+
+    def summary(self) -> str:
+        """Return a concise summary of the inspection."""
+        if self.fault_detected:
+            location = (
+                f"{self.fault_location:.2f} m"
+                if self.fault_location is not None
+                else "Unknown"
+            )
+            return (
+                f"Fault detected "
+                f"(confidence={self.confidence:.3f}, "
+                f"location={location})."
+            )
 
         return (
+            f"No fault detected "
+            f"(confidence={self.confidence:.3f})."
+        )
+
+    def __str__(self) -> str:
+        """Return a human-readable representation."""
+        return self.summary()
+
+    def __repr__(self) -> str:
+        """Return a developer-friendly representation."""
+        return (
             "InspectionReport("
-            f"fault_detected={self.fault_detected}, "
-            f"confidence={self.confidence:.3f}, "
-            f"fault_location={location}"
+            f"fault_detected={self.fault_detected!r}, "
+            f"confidence={self.confidence!r}, "
+            f"fault_location={self.fault_location!r}, "
+            f"metrics={self.metrics!r}, "
+            f"metadata={self.metadata!r}"
             ")"
-      )
+        )
