@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "FLDR"
-version = "0.1.0"
+version = "0.0.1"
 description = "Fault Line Detection in Robotics"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "Apache-2.0"
 
 authors = [
-    { name = "Kazi Saad Asif" },
+    { name = "Asif Kazi" },
 ]
 
 keywords = [
