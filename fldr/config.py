@@ -71,15 +71,13 @@ class FLDRConfig:
             )
 
         if self.pipeline.diameter_m <= 0.0:
-            raise ConfigurationError("pipeline diameter must be positive.")
+            raise ConfigurationError("Pipeline diameter must be positive.")
 
         if self.pipeline.inspection_length_m <= 0.0:
-            raise ConfigurationError("inspection length must be positive.")
+            raise ConfigurationError("Inspection length must be positive.")
 
         if self.sensors.sampling_frequency_hz <= 0.0:
-            raise ConfigurationError(
-                "sampling_frequency_hz must be positive."
-            )
+            raise ConfigurationError("sampling_frequency_hz must be positive.")
 
     def to_dict(self) -> dict[str, object]:
         """Return the configuration as a dictionary."""
