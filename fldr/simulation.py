@@ -37,9 +37,7 @@ class PipeSimulator:
         config: SimulationConfig | None = None,
     ):
         self.config = config or SimulationConfig()
-        self.rng = np.random.default_rng(
-            self.config.seed
-        )
+        self.rng = np.random.default_rng(self.config.seed)
 
     def generate(
         self,
@@ -50,16 +48,11 @@ class PipeSimulator:
         Returns
         -------
         dict:
-            sensor_data:
-                simulated sensor readings
-
-            fault_labels:
-                binary fault locations
+            sensor data and fault labels.
         """
 
         n = self.config.length
 
-        # Normal pipe sensor response
         signal = self.rng.normal(
             loc=0.0,
             scale=self.config.noise_level,
@@ -68,10 +61,7 @@ class PipeSimulator:
 
         labels = np.zeros(n, dtype=int)
 
-        # Random fault generation
-        faults = self.rng.random(n) < (
-            self.config.fault_probability
-        )
+        faults = self.rng.random(n) < (self.config.fault_probability)
 
         for index in np.where(faults)[0]:
             width = self.rng.integers(
@@ -85,8 +75,7 @@ class PipeSimulator:
             )
 
             signal[index:end] += (
-                self.config.fault_amplitude
-                * self.rng.random()
+                self.config.fault_amplitude * self.rng.random()
             )
 
             labels[index:end] = 1
@@ -105,9 +94,7 @@ def simulate_inspection(
     Convenience function for quick simulations.
     """
 
-    simulator = PipeSimulator(
-        SimulationConfig(length=length)
-    )
+    simulator = PipeSimulator(SimulationConfig(length=length))
 
     return simulator.generate()
 
