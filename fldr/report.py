@@ -56,10 +56,7 @@ class InspectionReport:
                 f"location={location})."
             )
 
-        return (
-            f"No fault detected "
-            f"(confidence={self.confidence:.3f})."
-        )
+        return f"No fault detected (confidence={self.confidence:.3f})."
 
     def __str__(self) -> str:
         """Return a human-readable representation."""
