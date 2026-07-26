@@ -1,0 +1,19 @@
+site_name: FLDR Documentation
+site_description: Fault Line Detection Robotics Framework
+site_author: FLDR Contributors
+
+repo_url: https://github.com/ksaad20/FLDR
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - Architecture: architecture.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
