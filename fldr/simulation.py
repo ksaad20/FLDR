@@ -39,16 +39,14 @@ class PipeSimulator:
         self.config = config or SimulationConfig()
         self.rng = np.random.default_rng(self.config.seed)
 
-    def generate(
-        self,
-    ) -> Dict[str, np.ndarray]:
+    def generate(self) -> Dict[str, np.ndarray]:
         """
         Generate synthetic inspection data.
 
         Returns
         -------
-        dict:
-            sensor data and fault labels.
+        dict
+            Simulated sensor data and fault labels.
         """
 
         n = self.config.length
@@ -61,7 +59,7 @@ class PipeSimulator:
 
         labels = np.zeros(n, dtype=int)
 
-        faults = self.rng.random(n) < (self.config.fault_probability)
+        faults = self.rng.random(n) < self.config.fault_probability
 
         for index in np.where(faults)[0]:
             width = self.rng.integers(
@@ -69,10 +67,7 @@ class PipeSimulator:
                 high=20,
             )
 
-            end = min(
-                index + width,
-                n,
-            )
+            end = min(index + width, n)
 
             signal[index:end] += (
                 self.config.fault_amplitude * self.rng.random()
