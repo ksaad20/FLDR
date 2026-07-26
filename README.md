@@ -10,6 +10,7 @@
 [![GitHub release](https://img.shields.io/github/v/release/ksaad20/FLDR)](https://github.com/ksaad20/FLDR/releases)
 [![GitHub stars](https://img.shields.io/github/stars/ksaad20/FLDR?style=social)](https://github.com/ksaad20/FLDR)
 [![GitHub forks](https://img.shields.io/github/forks/ksaad20/FLDR?style=social)](https://github.com/ksaad20/FLDR/network/members)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21611443.svg)](https://doi.org/10.5281/zenodo.21611443)
 
 ---
 
