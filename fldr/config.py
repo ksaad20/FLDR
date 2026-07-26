@@ -16,7 +16,7 @@ class PipelineConfig:
     """Pipeline-specific settings."""
 
     pipeline_type: str = "oil"
-    diameter_m: float = 0.50
+    diameter_m: float = 0.5
     inspection_length_m: float = 1000.0
     material: str = "steel"
 
@@ -37,7 +37,7 @@ class SensorConfig:
 class DetectionConfig:
     """Detection configuration."""
 
-    confidence_threshold: float = 0.50
+    confidence_threshold: float = 0.5
     enable_gpu: bool = False
     detect_corrosion: bool = True
     detect_cracks: bool = True
@@ -72,19 +72,13 @@ class FLDRConfig:
             )
 
         if self.pipeline.diameter_m <= 0.0:
-            raise ConfigurationError(
-                "pipeline diameter must be positive."
-            )
+            raise ConfigurationError("pipeline diameter must be positive.")
 
         if self.pipeline.inspection_length_m <= 0.0:
-            raise ConfigurationError(
-                "inspection length must be positive."
-            )
+            raise ConfigurationError("inspection length must be positive.")
 
         if self.sensors.sampling_frequency_hz <= 0.0:
-            raise ConfigurationError(
-                "sampling_frequency_hz must be positive."
-            )
+            raise ConfigurationError("sampling_frequency_hz must be positive.")
 
     def to_dict(self) -> dict[str, object]:
         """Return the configuration as a dictionary."""
