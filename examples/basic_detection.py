@@ -42,11 +42,7 @@ def main() -> None:
     print(f"Detected fault samples: {fault_count}")
 
     if fault_count > 0:
-        locations = [
-            index
-            for index, value in enumerate(detections)
-            if value == 1
-        ]
+        locations = [index for index, value in enumerate(detections) if value == 1]
 
         print(f"First detected fault locations: {locations[:10]}")
     else:
