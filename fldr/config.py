@@ -72,35 +72,21 @@ class FLDRConfig:
     )
 
     def validate(self) -> None:
-        """Validate configuration values."""
+    """Validate configuration values."""
 
-        if (
-            not 0.0
-            <= self.detection.confidence_threshold
-            <= 1.0
-        ):
-            raise ConfigurationError(
-                "confidence_threshold must be between "
-                "0.0 and 1.0."
-            )
+    if not 0.0 <= self.detection.confidence_threshold <= 1.0:
+        raise ConfigurationError(
+            "confidence_threshold must be between " "0.0 and 1.0."
+        )
 
-        if self.pipeline.diameter_m <= 0.0:
-            raise ConfigurationError(
-                "pipeline diameter must be positive."
-            )
+    if self.pipeline.diameter_m <= 0.0:
+        raise ConfigurationError("pipeline diameter must be positive.")
 
-        if self.pipeline.inspection_length_m <= 0.0:
-            raise ConfigurationError(
-                "inspection length must be positive."
-            )
+    if self.pipeline.inspection_length_m <= 0.0:
+        raise ConfigurationError("inspection length must be positive.")
 
-        if (
-            self.sensors.sampling_frequency_hz
-            <= 0.0
-        ):
-            raise ConfigurationError(
-                "sampling_frequency_hz must be positive."
-            )
+    if self.sensors.sampling_frequency_hz <= 0.0:
+        raise ConfigurationError("sampling_frequency_hz must be positive.")
 
 
 def create_default_config() -> FLDRConfig:
