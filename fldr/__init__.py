@@ -20,5 +20,5 @@ __license__ = "Apache-2.0"
 
 __all__ = ["__version__",
           "run_inspection",
-          "InspectionReport",
-          ]
+          "InspectionReport"
+]
