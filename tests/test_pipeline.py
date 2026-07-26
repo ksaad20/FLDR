@@ -22,6 +22,7 @@ class TestPipeline:
     def test_validate_valid_pipeline(self) -> None:
         """Validation should succeed for a valid pipeline."""
         pipeline = Pipeline()
+
         pipeline.validate()
 
     def test_validate_invalid_diameter(self) -> None:
@@ -54,9 +55,7 @@ class TestPipeline:
         """Test cross-sectional area calculation."""
         pipeline = Pipeline(diameter_m=2.0)
 
-        assert pipeline.cross_sectional_area_m2 == pytest.approx(
-            3.141592653589793
-        )
+        assert pipeline.cross_sectional_area_m2 == pytest.approx(3.141592653589793)
 
     def test_to_dict(self) -> None:
         """Test dictionary conversion."""
