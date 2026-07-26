@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from metrics.metrics import (
+from fldr.metrics import (
     accuracy,
     f1_score,
     false_alarm_rate,
