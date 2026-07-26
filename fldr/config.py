@@ -58,95 +58,79 @@ class OutputConfig:
 class FLDRConfig:
     """Top-level FLDR configuration."""
 
-    pipeline: PipelineConfig = field(
-        default_factory=PipelineConfig,
-    )
-    sensors: SensorConfig = field(
-        default_factory=SensorConfig,
-    )
-    detection: DetectionConfig = field(
-        default_factory=DetectionConfig,
-    )
-    output: OutputConfig = field(
-        default_factory=OutputConfig,
-    )
+    pipeline: PipelineConfig = field(default_factory=PipelineConfig)
+    sensors: SensorConfig = field(default_factory=SensorConfig)
+    detection: DetectionConfig = field(default_factory=DetectionConfig)
+    output: OutputConfig = field(default_factory=OutputConfig)
 
     def validate(self) -> None:
-    """Validate configuration values."""
+        """Validate configuration values."""
 
-    if not 0.0 <= self.detection.confidence_threshold <= 1.0:
-        raise ConfigurationError(
-            "confidence_threshold must be between " "0.0 and 1.0."
-        )
+        if not 0.0 <= self.detection.confidence_threshold <= 1.0:
+            raise ConfigurationError(
+                "confidence_threshold must be between 0.0 and 1.0."
+            )
 
-    if self.pipeline.diameter_m <= 0.0:
-        raise ConfigurationError("pipeline diameter must be positive.")
+        if self.pipeline.diameter_m <= 0.0:
+            raise ConfigurationError(
+                "pipeline diameter must be positive."
+            )
 
-    if self.pipeline.inspection_length_m <= 0.0:
-        raise ConfigurationError("inspection length must be positive.")
+        if self.pipeline.inspection_length_m <= 0.0:
+            raise ConfigurationError(
+                "inspection length must be positive."
+            )
 
-    if self.sensors.sampling_frequency_hz <= 0.0:
-        raise ConfigurationError("sampling_frequency_hz must be positive.")
+        if self.sensors.sampling_frequency_hz <= 0.0:
+            raise ConfigurationError(
+                "sampling_frequency_hz must be positive."
+            )
+
+    def to_dict(self) -> dict[str, object]:
+        """Return the configuration as a dictionary."""
+
+        return asdict(self)
 
 
 def create_default_config() -> FLDRConfig:
-    """Create a validated default configuration."""
+    """Create and validate the default configuration."""
 
     config = FLDRConfig()
     config.validate()
     return config
 
 
-def load_environment(
-    config: FLDRConfig,
-) -> FLDRConfig:
+def load_environment(config: FLDRConfig) -> FLDRConfig:
     """Apply environment variable overrides."""
 
-    if value := os.getenv(
-        "FLDR_OUTPUT_DIRECTORY",
-    ):
+    if value := os.getenv("FLDR_OUTPUT_DIRECTORY"):
         config.output.directory = Path(value)
 
-    if value := os.getenv(
-        "FLDR_CONFIDENCE_THRESHOLD",
-    ):
-        config.detection.confidence_threshold = float(
-            value,
-        )
+    if value := os.getenv("FLDR_CONFIDENCE_THRESHOLD"):
+        config.detection.confidence_threshold = float(value)
 
-    if value := os.getenv(
-        "FLDR_ENABLE_GPU",
-    ):
-        config.detection.enable_gpu = (
-            value.lower()
-            in {
-                "1",
-                "true",
-                "yes",
-                "on",
-            }
-        )
+    if value := os.getenv("FLDR_ENABLE_GPU"):
+        config.detection.enable_gpu = value.lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+
+    if value := os.getenv("FLDR_PIPELINE_TYPE"):
+        config.pipeline.pipeline_type = value
+
+    if value := os.getenv("FLDR_PIPELINE_DIAMETER_M"):
+        config.pipeline.diameter_m = float(value)
+
+    if value := os.getenv("FLDR_INSPECTION_LENGTH_M"):
+        config.pipeline.inspection_length_m = float(value)
+
+    if value := os.getenv("FLDR_PIPELINE_MATERIAL"):
+        config.pipeline.material = value
+
+    if value := os.getenv("FLDR_SAMPLING_FREQUENCY_HZ"):
+        config.sensors.sampling_frequency_hz = float(value)
 
     config.validate()
     return config
-
-
-def configuration_to_dict(
-    config: FLDRConfig,
-) -> dict[str, object]:
-    """Return a serializable dictionary."""
-
-    return asdict(config)
-
-
-__all__ = [
-    "ConfigurationError",
-    "PipelineConfig",
-    "SensorConfig",
-    "DetectionConfig",
-    "OutputConfig",
-    "FLDRConfig",
-    "create_default_config",
-    "load_environment",
-    "configuration_to_dict",
-]
