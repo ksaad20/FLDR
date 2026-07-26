@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
-from fldr.io import (load_signal, save_signal)
+from fldr.io import load_signal, save_signal
 
 
 def test_save_signal_creates_file(tmp_path: Path):
