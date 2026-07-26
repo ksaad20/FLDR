@@ -6,7 +6,9 @@ import csv
 import json
 from pathlib import Path
 from typing import Any
+
 import numpy as np
+
 
 from fldr.core import InspectionReport
 
