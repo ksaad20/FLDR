@@ -73,4 +73,3 @@ def test_reproducible_results():
         first["labels"],
         second["labels"],
     )
-
