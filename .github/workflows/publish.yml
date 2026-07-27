@@ -1,75 +1,49 @@
 name: Publish to PyPI
 
 on:
-  push:
-    tags:
-      - "v*"
-
-  workflow_dispatch:
+  release:
+    types:
+      - published
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: publish-${{ github.ref }}
+  group: pypi-faultlinedetectionrobotics
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Build distributions
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-
-      - name: Upgrade pip
-        run: |
-          python -m pip install --upgrade pip
-
-      - name: Install build tools
-        run: |
-          pip install build twine
-
-      - name: Build package
-        run: |
-          python -m build
-
-      - name: Verify distributions
-        run: |
-          twine check dist/*
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: python-distributions
-          path: dist/
-
-  publish:
-    name: Publish to PyPI
-    needs: build
+  build-and-publish:
+    name: Build and publish faultlinedetectionrobotics
     runs-on: ubuntu-latest
 
     environment:
       name: pypi
-      url: https://pypi.org/p/FLDR
-
-    permissions:
-      id-token: write
 
     steps:
-      - name: Download distributions
-        uses: actions/download-artifact@v5
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          name: python-distributions
+          python-version: "3.12"
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install build backend
+        run: python -m pip install build
+
+      - name: Build faultlinedetectionrobotics
+        run: python -m build
+
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: faultlinedetectionrobotics-distributions
           path: dist/
 
-      - name: Publish package
+      - name: Publish faultlinedetectionrobotics to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
