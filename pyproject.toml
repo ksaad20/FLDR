@@ -3,7 +3,7 @@ requires = ["setuptools>=75", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "FLDR"
+name = "faultlinedetection"
 version = "0.0.1"
 description = "Fault Line Detection in Robotics"
 readme = "README.md"
