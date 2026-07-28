@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+
+...
+
+version: "v0.0.1"
+
+...
+
+preferred-citation:
+  type: software
+  authors:
+    - family-names: Kazi
+      given-names: Asif
+      orcid: "https://orcid.org/0009-0003-2748-5558"
+    - family-names: Mamun
+      given-names: Kazi Andelib
+      orcid: "https://orcid.org/0009-0000-7025-2762"
+  title: "FaultLineDetectionRobotics"
+  version: "v0.0.1"
+  year: 2026
+  url: "https://github.com/ksaad20/FaultLineDetectionRobotics"
