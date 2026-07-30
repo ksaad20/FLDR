@@ -11,6 +11,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/ksaad20/FLDR?style=social)](https://github.com/ksaad20/FLDR)
 [![GitHub forks](https://img.shields.io/github/forks/ksaad20/FLDR?style=social)](https://github.com/ksaad20/FLDR/network/members)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21611443.svg)](https://doi.org/10.5281/zenodo.21611443)
+[![PyPI Downloads](https://static.pepy.tech/badge/faultlinedetectionrobotics)](https://pepy.tech/projects/faultlinedetectionrobotics)
 
 ---
 
